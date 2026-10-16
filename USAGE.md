@@ -1,40 +1,36 @@
-# Bridge Antigravity Patch — Usage Guide
+# Bridge Antigravity Patch v0.2 — Windows Guide
 
-> **Status:** v0.1 prototype. The launcher script is **not yet uploaded to this repository**. Do not run the commands below until `bridge.ps1` is added and reviewed.
+## Install
+Download the repository as ZIP using **Code → Download ZIP**, extract it to a local directory, and inspect the PowerShell source. You need Windows 10/11, PowerShell 5.1+, and an installed Antigravity IDE. No DLL installation or administrator rights are required.
 
-## Purpose
-Launch Google Antigravity on Windows with a local HTTP proxy (for example, a proxy exposed by v2rayN). This is a connection troubleshooting tool, not a guarantee of bypassing account eligibility or regional restrictions.
+## GUI
+Right-click **gui.ps1** and choose **Run with PowerShell** if your Windows policy permits local scripts. Alternatively, open PowerShell in the extracted directory and run:
+\`\`\`powershell
+.\gui.ps1
+\`\`\`
+If execution policy blocks scripts, consult your organization's policy. Do not disable system security controls solely to run this utility.
 
-## Requirements
-- Windows 10/11 and PowerShell
-- Google Antigravity installed
-- A trusted, working local HTTP proxy
-- The project launcher `bridge.ps1` (not yet available in this repository)
+1. Start a trusted local **HTTP** proxy in your existing proxy client.
+2. Click **Detect ports**. This only scans a small list of loopback TCP ports, and cannot identify whether the service speaks HTTP proxy.
+3. Confirm the actual HTTP proxy address/port in your proxy client.
+4. Click **Test proxy** to check local TCP reachability and IDE path detection.
+5. Click **Launch IDE** to start Antigravity with process-scoped proxy settings.
+6. Use **Browse** to choose the IDE executable if automatic detection fails.
 
-## Usage (after the script is published)
-1. Start your proxy client and enable its **HTTP** proxy listener. Confirm the port in your client; `10809` below is only an example.
-2. Download and inspect the project's `bridge.ps1` source before running it.
-3. Open PowerShell in the directory containing the script.
-4. Run:
-
-```powershell
+## CLI
+\`\`\`powershell
+.\bridge.ps1 -Action status -Proxy http://127.0.0.1:10809
 .\bridge.ps1 -Action launch -Proxy http://127.0.0.1:10809
-```
+.\bridge.ps1 -Action launch -Proxy http://127.0.0.1:10809 -Exe 'C:\Path\To\Antigravity.exe'
+.\bridge.ps1 -Action restore
+\`\`\`
 
-5. Check whether Antigravity starts and can connect. If it fails, verify the proxy port, proxy protocol, and the app installation path.
+## Known limitations
+- A successful TCP port check does not confirm internet connectivity, authentication, or HTTP proxy protocol.
+- Some helper processes and authentication flows may ignore Chromium proxy flags or environment variables.
+- No SOCKS5, DLL injection, Gemini/Chrome profile modifications, region entitlement overrides, or bypass of server-side restrictions.
+- **Restore** only explains that this tool made no persistent changes; it does not undo unrelated changes made by other applications.
+- Untested on real Antigravity Windows installations; report failures with sanitized error output.
 
-## Troubleshooting
-- **Connection refused:** proxy client is stopped or the HTTP listener port is incorrect.
-- **Timeout:** check the upstream proxy and firewall rules.
-- **App not found:** verify Antigravity is installed; launcher auto-detection may need adjustment.
-- **Login still fails:** a network proxy does not override server-side account restrictions.
-- **SOCKS5 only:** configure an HTTP listener first; do not assume the current prototype supports SOCKS5 directly.
-
-## Security
-- Review scripts before execution. Do not run untrusted DLLs or scripts as administrator.
-- Never commit account cookies, tokens, credentials, or proxy subscription secrets.
-- Prefer a local loopback listener (`127.0.0.1`) over an externally exposed proxy.
-- This guide does not recommend disabling antivirus or PowerShell security controls.
-
-## Project status
-The repository currently contains documentation only. Publishing and testing the launcher, adding a rollback mechanism, and validating behavior on Windows remain outstanding.
+## Safety
+Do not paste proxy passwords, cookies, access tokens, or API keys into issues. The launcher only accepts loopback HTTP proxies without embedded credentials.
