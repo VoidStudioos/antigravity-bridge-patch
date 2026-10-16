@@ -30,6 +30,10 @@ jobs:
           if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
           Compress-Archive -Path dist/* -DestinationPath BridgeAntigravityPatch-win-x64.zip
           Get-FileHash BridgeAntigravityPatch-win-x64.zip -Algorithm SHA256 | ForEach-Object {"$($_.Hash.ToLower())  BridgeAntigravityPatch-win-x64.zip"} | Set-Content SHA256SUMS.txt
+      - name: Verify packaged files
+        shell: pwsh
+        run: |
+          foreach($f in @('BridgeAntigravityPatch.exe','bridge.ps1','gui.ps1','USAGE.md','LICENSE')) { if(-not (Test-Path (Join-Path dist $f))){throw "Missing output: $f"} }
       - uses: actions/upload-artifact@v4
         with:
           name: BridgeAntigravityPatch-win-x64
